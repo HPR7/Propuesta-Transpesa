@@ -1,0 +1,1056 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#111b2a">
+  <title>Diagnóstico Empresarial de Transformación — TRANSPESA</title>
+  <style>
+    :root {
+      --ink: #122033;
+      --muted: #627083;
+      --paper: #f5f4ef;
+      --white: #ffffff;
+      --line: rgba(18, 32, 51, .14);
+      --red: #ca2634;
+      --red-dark: #8e1822;
+      --teal: #22b8bd;
+      --blue: #176a89;
+      --navy: #111b2a;
+      --lime: #b9d53c;
+      --shadow: 0 24px 80px rgba(12, 24, 40, .18);
+      --radius: clamp(18px, 2vw, 32px);
+    }
+
+    * { box-sizing: border-box; }
+    html, body { height: 100%; margin: 0; }
+    body {
+      overflow: hidden;
+      background: #0b1420;
+      color: var(--ink);
+      font-family: Inter, Aptos, "Segoe UI", Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+    }
+    button { font: inherit; }
+    .deck { height: 100%; width: 100%; position: relative; }
+    .slide {
+      position: absolute;
+      inset: 0;
+      display: none;
+      overflow: auto;
+      padding: clamp(72px, 8.5vh, 104px) clamp(36px, 6vw, 92px) clamp(80px, 9vh, 108px);
+      background:
+        radial-gradient(circle at 90% 6%, rgba(34,184,189,.10), transparent 30%),
+        linear-gradient(135deg, #faf9f5 0%, #f2f1ec 100%);
+      isolation: isolate;
+    }
+    .slide::before {
+      content: "";
+      position: absolute;
+      inset: 0 0 auto 0;
+      height: 5px;
+      background: linear-gradient(90deg, var(--red) 0 58%, var(--teal) 58% 100%);
+      z-index: -1;
+    }
+    .slide.active { display: flex; flex-direction: column; animation: enter .42s ease both; }
+    @keyframes enter { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; scroll-behavior: auto !important; transition: none !important; } }
+
+    .brandbar {
+      position: absolute;
+      top: clamp(24px, 3.6vh, 38px);
+      left: clamp(36px, 6vw, 92px);
+      right: clamp(36px, 6vw, 92px);
+      height: 34px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      pointer-events: none;
+    }
+    .brandbar img { display: block; object-fit: contain; max-height: 30px; width: auto; }
+    .brandbar .transpesa { max-width: 150px; }
+    .brandbar .assegura { max-width: 126px; max-height: 26px; }
+    .brandbar .slide-no { color: var(--muted); font-size: 12px; letter-spacing: .16em; font-weight: 800; }
+    .brand-pair { display: flex; align-items: center; gap: 18px; }
+    .brand-pair::after { content: ""; width: 1px; height: 26px; background: var(--line); order: 1; }
+    .brand-pair .transpesa { order: 0; }
+    .brand-pair .assegura { order: 2; }
+
+    .eyebrow { color: var(--red); font-size: clamp(11px, 1vw, 14px); letter-spacing: .19em; text-transform: uppercase; font-weight: 850; margin: 0 0 12px; }
+    h1, h2, h3, p { margin-top: 0; }
+    h1 { font-size: clamp(42px, 6vw, 84px); line-height: .98; letter-spacing: -.045em; margin-bottom: 24px; max-width: 1020px; }
+    h2 { font-size: clamp(32px, 4.25vw, 60px); line-height: 1.02; letter-spacing: -.035em; margin-bottom: clamp(22px, 4vh, 44px); max-width: 1100px; }
+    h3 { font-size: clamp(19px, 2vw, 28px); line-height: 1.12; margin-bottom: 10px; }
+    p { font-size: clamp(16px, 1.45vw, 22px); line-height: 1.42; }
+    .lead { color: var(--muted); max-width: 900px; font-size: clamp(19px, 2vw, 28px); line-height: 1.38; }
+    .small { font-size: clamp(12px, 1vw, 15px); line-height: 1.4; color: var(--muted); }
+    .accent { color: var(--red); }
+    .teal { color: var(--teal); }
+    .strong { font-weight: 850; }
+    .push { margin-top: auto; }
+    .rule { height: 1px; background: var(--line); width: 100%; }
+
+    .cover {
+      color: white;
+      background:
+        linear-gradient(90deg, rgba(7,17,29,.96) 0 55%, rgba(7,17,29,.55) 100%),
+        radial-gradient(circle at 82% 22%, rgba(202,38,52,.50), transparent 28%),
+        linear-gradient(145deg, #111b2a, #20334b);
+    }
+    .cover::before { height: 7px; }
+    .cover .cover-marks { display:flex; align-items:center; gap: 28px; margin-bottom: clamp(42px, 8vh, 84px); }
+    .cover .cover-marks img { object-fit: contain; width: auto; }
+    .cover .cover-marks .transpesa { max-width: min(280px, 30vw); max-height: 82px; background:white; padding: 10px 14px; border-radius: 8px; }
+    .cover .cover-marks .assegura { max-width: min(240px, 26vw); max-height: 70px; }
+    .cover .x { font-size: 28px; color: rgba(255,255,255,.5); font-weight: 300; }
+    .cover h1 { max-width: 980px; }
+    .cover .lead { color: rgba(255,255,255,.72); max-width: 820px; }
+    .cover-meta { display:flex; gap: 28px; align-items:center; margin-top:auto; color:rgba(255,255,255,.72); font-size:13px; letter-spacing:.12em; text-transform:uppercase; }
+    .cover-meta span + span { border-left:1px solid rgba(255,255,255,.25); padding-left:28px; }
+
+    .capability-line { display: grid; grid-template-columns: repeat(6, 1fr); gap: clamp(10px, 1.5vw, 24px); align-items: end; margin-top: auto; }
+    .capability { min-height: clamp(118px, 19vh, 182px); border-top: 3px solid var(--red); padding-top: 16px; display: flex; flex-direction: column; justify-content: space-between; }
+    .capability b { font-size: clamp(16px, 1.4vw, 21px); }
+    .capability span { color: var(--muted); font-size: clamp(12px, 1vw, 15px); line-height: 1.35; }
+    .statement { font-size: clamp(22px, 2.5vw, 36px); max-width: 1050px; font-weight: 760; line-height: 1.23; padding-left: 22px; border-left: 5px solid var(--red); }
+
+    .signal-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: clamp(22px, 3vw, 48px); }
+    .signal { border-top: 1px solid var(--line); padding-top: 15px; }
+    .signal h3 { display: flex; justify-content: space-between; align-items: baseline; }
+    .signal h3 span { color: var(--red); font-size: 12px; letter-spacing: .12em; }
+    .signal p { color: var(--muted); font-size: clamp(14px, 1.2vw, 18px); margin: 0; }
+
+    .hypothesis-tabs { display:flex; gap:10px; margin-bottom: 26px; }
+    .tab, .chip {
+      border: 1px solid var(--line); background: rgba(255,255,255,.55); color: var(--ink);
+      padding: 10px 16px; border-radius: 999px; cursor:pointer; font-size: 14px; font-weight: 760;
+    }
+    .tab:hover, .tab:focus-visible, .chip:hover, .chip:focus-visible { border-color: var(--red); outline:none; }
+    .tab.active { background: var(--red); border-color: var(--red); color:white; }
+    .chip.active { background: var(--red); border-color: var(--red); color:white; }
+    .hypothesis-stage { position:relative; min-height: min(46vh, 410px); }
+    .hypothesis-panel { display:none; grid-template-columns: 1fr 1fr; gap: clamp(28px, 5vw, 72px); align-items:center; }
+    .hypothesis-panel.active { display:grid; animation:enter .3s ease both; }
+    .hypothesis-panel .question { font-size: clamp(24px, 3.2vw, 46px); font-weight: 800; line-height:1.12; letter-spacing:-.025em; }
+    .data-chain { display:flex; flex-wrap:wrap; gap:10px; align-content:center; }
+    .data-node { padding: 12px 16px; background:white; border:1px solid var(--line); border-left:4px solid var(--teal); font-weight:760; box-shadow:0 8px 22px rgba(18,32,51,.06); }
+    .billing-flow { display:grid; gap:0; }
+    .billing-step { padding:15px 18px; border-left:4px solid var(--red); background:rgba(255,255,255,.72); font-weight:780; }
+    .billing-step + .billing-step { border-top:1px solid var(--line); }
+    .hypothesis-note { margin-top:auto; display:flex; align-items:center; gap:12px; color:var(--red-dark); font-weight:760; font-size:clamp(14px,1.3vw,19px); }
+    .hypothesis-note::before { content:"HIPÓTESIS A VALIDAR"; font-size:11px; letter-spacing:.14em; color:white; background:var(--red); padding:7px 9px; }
+
+    .aatmf-core { display:grid; grid-template-columns: .9fr 1.1fr; gap: clamp(40px, 7vw, 100px); align-items:center; flex:1; }
+    .aatmf-mark { width:min(320px, 100%); aspect-ratio:1; border:1px solid var(--line); border-radius:50%; display:grid; place-items:center; position:relative; }
+    .aatmf-mark::before, .aatmf-mark::after { content:""; position:absolute; inset:11%; border:1px solid rgba(34,184,189,.35); border-radius:50%; }
+    .aatmf-mark::after { inset:27%; background:var(--navy); }
+    .aatmf-mark strong { position:relative; z-index:1; color:white; font-size:clamp(30px,4vw,58px); letter-spacing:-.04em; }
+    .dimensions { display:grid; grid-template-columns:repeat(2,1fr); gap:14px 28px; }
+    .dimension { border-bottom:1px solid var(--line); padding: 9px 0 12px; font-size:clamp(16px,1.35vw,20px); font-weight:760; }
+    .dimension span { color:var(--red); margin-right:10px; }
+
+    .sequence { display:grid; grid-template-columns:repeat(8,1fr); gap:7px; margin-top:auto; }
+    .sequence button { min-width:0; border:0; border-top:3px solid var(--line); background:transparent; color:var(--muted); padding:14px 5px; cursor:pointer; text-align:left; font-size:clamp(11px,.92vw,14px); font-weight:800; text-transform:uppercase; letter-spacing:.04em; }
+    .sequence button:hover, .sequence button:focus-visible { color:var(--red); outline:none; }
+    .sequence button.active { border-color:var(--red); color:var(--ink); }
+    .sequence-detail { min-height:200px; display:grid; grid-template-columns: 90px 1fr; gap:28px; align-items:center; }
+    .sequence-index { font-size:clamp(54px,8vw,110px); font-weight:850; color:rgba(202,38,52,.14); letter-spacing:-.08em; }
+    .sequence-copy h3 { font-size:clamp(28px,3.2vw,46px); }
+    .sequence-copy p { max-width:760px; color:var(--muted); }
+
+    .scope-grid { display:grid; grid-template-columns:.72fr 1.28fr; gap:clamp(34px,6vw,84px); align-items:start; }
+    .metric { padding:22px 0; border-top:1px solid var(--line); }
+    .metric strong { display:block; font-size:clamp(44px,6vw,82px); letter-spacing:-.06em; line-height:.9; }
+    .metric span { color:var(--muted); font-size:clamp(14px,1.2vw,18px); }
+    .units { display:grid; grid-template-columns:repeat(2,1fr); column-gap:32px; }
+    .unit { display:flex; gap:14px; align-items:baseline; padding:13px 0; border-bottom:1px solid var(--line); font-weight:730; font-size:clamp(14px,1.18vw,18px); }
+    .unit span { color:var(--red); font-size:12px; letter-spacing:.08em; }
+
+    .needs { display:grid; grid-template-columns:repeat(4,1fr); gap:clamp(18px,2.5vw,38px); margin-top:auto; }
+    .need { border-top:4px solid var(--red); padding-top:18px; }
+    .need .num { color:var(--red); font-size:12px; font-weight:850; letter-spacing:.14em; }
+    .need p { color:var(--muted); font-size:clamp(13px,1.08vw,17px); margin:0; }
+    .need h3 { font-size:clamp(19px,1.75vw,26px); margin:8px 0 14px; }
+
+    .deliverable-list { display:grid; grid-template-columns:repeat(4,1fr); gap:0 28px; counter-reset:item; }
+    .deliverable { counter-increment:item; border-top:1px solid var(--line); padding:15px 0 20px; min-height:118px; }
+    .deliverable::before { content:"0" counter(item); display:block; color:var(--red); font-size:11px; font-weight:850; letter-spacing:.12em; margin-bottom:8px; }
+    .deliverable b { display:block; font-size:clamp(15px,1.3vw,20px); margin-bottom:5px; }
+    .deliverable span { color:var(--muted); font-size:clamp(12px,.98vw,15px); line-height:1.35; }
+
+    .roadmap-nav { display:flex; gap:9px; flex-wrap:wrap; margin-bottom:30px; }
+    .roadmap-stage { display:grid; grid-template-columns:.72fr 1.28fr; gap:clamp(34px,6vw,88px); align-items:center; min-height:310px; }
+    .roadmap-window { color:var(--red); font-size:clamp(48px,7vw,92px); font-weight:850; line-height:.92; letter-spacing:-.06em; }
+    .roadmap-copy h3 { font-size:clamp(28px,3vw,44px); }
+    .roadmap-copy p { color:var(--muted); max-width:700px; }
+    .roadmap-track { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; margin-top:auto; }
+    .roadmap-segment { height:9px; background:var(--line); }
+    .roadmap-segment.active { background:var(--red); }
+
+    .layer-stage { display:grid; grid-template-columns: .72fr 1.28fr; gap:clamp(32px,5vw,72px); align-items:center; flex:1; }
+    .layer-menu { display:grid; gap:6px; }
+    .layer-menu button { text-align:left; padding:10px 0; background:none; border:0; border-bottom:1px solid var(--line); color:var(--muted); font-weight:760; cursor:pointer; }
+    .layer-menu button.active, .layer-menu button:hover, .layer-menu button:focus-visible { color:var(--red); outline:none; }
+    .layer-visual { position:relative; min-height:390px; display:grid; place-items:center; }
+    .rings { width:min(520px,100%); aspect-ratio:1.3; position:relative; display:grid; place-items:center; }
+    .ring { position:absolute; border:1px solid rgba(18,32,51,.18); border-radius:50%; transition:.3s ease; }
+    .ring:nth-child(1){ inset:0; }
+    .ring:nth-child(2){ inset:11%; }
+    .ring:nth-child(3){ inset:22%; }
+    .ring:nth-child(4){ inset:34%; background:var(--navy); border:0; }
+    .rings[data-layer="fleet"] .ring:nth-child(1), .rings[data-layer="operations"] .ring:nth-child(1),
+    .rings[data-layer="energy"] .ring:nth-child(2), .rings[data-layer="maintenance"] .ring:nth-child(2),
+    .rings[data-layer="safety"] .ring:nth-child(3), .rings[data-layer="commercial"] .ring:nth-child(3),
+    .rings[data-layer="financial"] .ring:nth-child(3) { border-color:var(--red); border-width:4px; box-shadow:0 0 45px rgba(202,38,52,.16); }
+    .core-label { position:relative; z-index:2; color:white; text-align:center; font-weight:850; font-size:clamp(18px,2vw,27px); line-height:1.15; }
+    .layer-label { position:absolute; z-index:3; color:var(--red); font-weight:850; top:7%; right:7%; background:var(--paper); padding:8px 10px; font-size:13px; text-transform:uppercase; letter-spacing:.08em; }
+    .vision-flag { color:var(--red-dark); font-size:12px; letter-spacing:.12em; font-weight:850; text-transform:uppercase; margin-bottom:10px; }
+
+    .timeline { display:grid; grid-template-columns:repeat(4,1fr); gap:0; margin-top:auto; }
+    .week { padding:18px 24px 10px; border-top:5px solid var(--line); min-height:170px; }
+    .week:first-child { border-color:var(--red); }
+    .week:nth-child(2) { border-color:#d8525d; }
+    .week:nth-child(3) { border-color:#7ba6ae; }
+    .week:nth-child(4) { border-color:var(--teal); }
+    .week b { color:var(--red); font-size:12px; letter-spacing:.12em; }
+    .week h3 { margin:10px 0; }
+    .week p { color:var(--muted); font-size:clamp(13px,1.05vw,16px); }
+    .scope-strip { display:grid; grid-template-columns:repeat(4,1fr); gap:24px; margin-bottom:30px; }
+    .scope-item { border-top:1px solid var(--line); padding-top:12px; }
+    .scope-item b { display:block; font-size:clamp(22px,2.5vw,36px); }
+    .scope-item span { color:var(--muted); font-size:13px; }
+
+    .pricing { display:grid; grid-template-columns:1fr 1fr; gap:clamp(40px,8vw,120px); align-items:start; }
+    .list-price { color:var(--muted); font-size:clamp(20px,2.2vw,30px); text-decoration:line-through; margin-bottom:18px; }
+    .offer { color:var(--red); font-size:clamp(48px,7vw,94px); line-height:.9; font-weight:880; letter-spacing:-.065em; }
+    .offer small { display:block; color:var(--muted); font-size:14px; letter-spacing:.05em; margin-top:14px; font-weight:700; }
+    .payment { display:grid; grid-template-columns:1fr 1fr; gap:26px; margin-top:34px; }
+    .payment div { border-top:3px solid var(--red); padding-top:12px; }
+    .payment b { display:block; font-size:clamp(28px,3vw,42px); }
+    .terms { border-left:1px solid var(--line); padding-left:clamp(28px,4vw,56px); }
+    .terms h3 { margin-top:18px; }
+    .terms p { font-size:clamp(13px,1.08vw,16px); color:var(--muted); }
+
+    .close {
+      color:white;
+      background:
+        radial-gradient(circle at 84% 18%, rgba(202,38,52,.42), transparent 28%),
+        linear-gradient(135deg,#101b2b,#182a40);
+    }
+    .close::before { height:7px; }
+    .close .brandbar .slide-no { color:rgba(255,255,255,.5); }
+    .close .question-small { color:rgba(255,255,255,.55); font-size:clamp(18px,2vw,28px); }
+    .close h2 { font-size:clamp(42px,5.6vw,78px); max-width:1050px; margin-bottom:34px; }
+    .close .formula { display:flex; align-items:center; flex-wrap:wrap; gap:14px; color:rgba(255,255,255,.72); font-size:clamp(17px,1.8vw,24px); }
+    .close .formula b { color:white; }
+    .close .tagline { margin-top:auto; display:flex; align-items:center; justify-content:space-between; gap:30px; }
+    .close .tagline img { max-width:min(240px,30vw); max-height:70px; object-fit:contain; }
+    .close .tagline p { margin:0; color:var(--teal); font-size:clamp(18px,2vw,28px); font-weight:760; }
+
+    .controls {
+      position:fixed; z-index:50; left:50%; bottom:max(18px, env(safe-area-inset-bottom)); transform:translateX(-50%);
+      display:flex; align-items:center; gap:8px; padding:7px; border-radius:999px;
+      background:rgba(9,17,28,.84); backdrop-filter:blur(16px); box-shadow:0 12px 34px rgba(0,0,0,.24);
+    }
+    .controls button { width:38px; height:38px; border:0; border-radius:50%; background:transparent; color:white; cursor:pointer; display:grid; place-items:center; }
+    .controls button:hover, .controls button:focus-visible { background:rgba(255,255,255,.14); outline:none; }
+    .counter { min-width:72px; text-align:center; color:rgba(255,255,255,.8); font-size:12px; font-weight:760; letter-spacing:.08em; }
+    .progress { position:fixed; left:0; bottom:0; height:4px; width:100%; background:rgba(255,255,255,.12); z-index:60; }
+    .progress span { display:block; height:100%; width:0; background:linear-gradient(90deg,var(--red),var(--teal)); transition:width .35s ease; }
+    .hint { position:fixed; right:22px; bottom:24px; z-index:50; color:rgba(255,255,255,.45); font-size:11px; letter-spacing:.08em; }
+
+    @media (max-width: 900px) {
+      .slide { padding-left:28px; padding-right:28px; }
+      .brandbar { left:28px; right:28px; }
+      .capability-line { grid-template-columns:repeat(3,1fr); }
+      .signal-grid { grid-template-columns:repeat(2,1fr); }
+      .hypothesis-panel, .aatmf-core, .scope-grid, .roadmap-stage, .layer-stage, .pricing { grid-template-columns:1fr; }
+      .sequence { grid-template-columns:repeat(4,1fr); }
+      .needs, .deliverable-list { grid-template-columns:repeat(2,1fr); }
+      .timeline { grid-template-columns:repeat(2,1fr); }
+      .layer-visual { min-height:300px; }
+      .terms { border-left:0; padding-left:0; border-top:1px solid var(--line); padding-top:18px; }
+      .hint { display:none; }
+    }
+    @media (max-width: 620px) {
+      .slide { padding-top:88px; padding-bottom:86px; }
+      .brand-pair .assegura, .brand-pair::after { display:none; }
+      .cover .cover-marks { gap:14px; }
+      .cover .x { font-size:18px; }
+      .capability-line, .signal-grid, .needs, .deliverable-list, .timeline, .scope-strip { grid-template-columns:1fr; }
+      .capability { min-height:auto; }
+      .hypothesis-stage { min-height:0; }
+      .sequence-detail { grid-template-columns:60px 1fr; }
+      .sequence { grid-template-columns:repeat(2,1fr); }
+      .units { grid-template-columns:1fr; }
+      .roadmap-track { grid-template-columns:repeat(4,1fr); }
+      .payment { grid-template-columns:1fr; }
+      .close .tagline { align-items:flex-start; flex-direction:column-reverse; }
+    }
+    @media (max-height: 700px) and (min-width: 901px) {
+      .slide { padding-top:66px; padding-bottom:68px; }
+      h2 { margin-bottom:20px; }
+      .brandbar { top:20px; }
+      .capability { min-height:110px; }
+      .sequence-detail { min-height:150px; }
+      .layer-visual { min-height:280px; }
+      .rings { width:360px; }
+      .timeline .week { min-height:130px; padding-top:12px; }
+      .deliverable { min-height:90px; padding-top:10px; }
+    }
+    @media print {
+      @page { size: 13.333in 7.5in; margin: 0; }
+      html, body { width:13.333in; height:auto; overflow:visible; background:white; }
+      .deck { height:auto; }
+      .slide { position:relative; display:flex !important; width:13.333in; height:7.5in; overflow:hidden; break-after:page; page-break-after:always; padding: .78in .8in .72in; }
+      .brandbar { top:.24in; left:.8in; right:.8in; }
+      .controls, .progress, .hint { display:none !important; }
+    }
+
+    /* Revisión visual v2: mayor densidad, contraste y presencia de marca. */
+    .slide {
+      padding-top: clamp(94px, 11vh, 122px);
+      background:
+        linear-gradient(90deg, rgba(202,38,52,.045) 0 12%, transparent 12% 100%),
+        radial-gradient(circle at 92% 12%, rgba(34,184,189,.13), transparent 30%),
+        linear-gradient(135deg, #fbfaf7 0%, #efeee8 100%);
+    }
+    .slide:nth-of-type(3n+2):not(.cover):not(.close) {
+      background:
+        linear-gradient(155deg, rgba(255,255,255,.97), rgba(235,239,239,.97)),
+        radial-gradient(circle at 10% 80%, rgba(202,38,52,.12), transparent 35%);
+    }
+    .slide.cover {
+      background:
+        linear-gradient(90deg, rgba(7,17,29,.98) 0 54%, rgba(7,17,29,.70) 72%, rgba(7,17,29,.90) 100%),
+        radial-gradient(circle at 82% 28%, rgba(202,38,52,.62), transparent 32%),
+        linear-gradient(145deg, #111b2a, #20334b);
+    }
+    .slide.close {
+      background:
+        radial-gradient(circle at 84% 18%, rgba(202,38,52,.42), transparent 28%),
+        linear-gradient(135deg,#101b2b,#182a40);
+    }
+    .brandbar {
+      top: 0;
+      left: 0;
+      right: 0;
+      height: clamp(68px, 8.5vh, 82px);
+      padding: 10px clamp(36px, 6vw, 92px);
+      background: rgba(255,255,255,.98);
+      box-shadow: 0 8px 30px rgba(18,32,51,.10);
+      z-index: 20;
+    }
+    .brandbar img { max-height: 46px; }
+    .brandbar .transpesa { max-width: 205px; max-height: 48px; }
+    .brandbar .assegura {
+      max-width: 176px;
+      max-height: 44px;
+      background: var(--navy);
+      border-radius: 7px;
+      padding: 7px 12px;
+    }
+    .brand-pair { gap: 16px; }
+    .brand-pair::after { height: 36px; }
+    .cover { padding-top: clamp(118px, 15vh, 150px); }
+    .cover .cover-marks {
+      position:absolute;
+      top:0;
+      left:0;
+      right:0;
+      height:clamp(78px,10vh,96px);
+      margin:0;
+      padding:12px clamp(36px,6vw,92px);
+      background:white;
+      box-shadow:0 12px 38px rgba(0,0,0,.18);
+      z-index:10;
+    }
+    .cover .cover-marks .transpesa {
+      max-width:min(270px,27vw);
+      max-height:64px;
+      padding:0;
+      border-radius:0;
+    }
+    .cover .cover-marks .assegura {
+      max-width:min(250px,26vw);
+      max-height:62px;
+      padding:10px 16px;
+      border-radius:8px;
+      background:var(--navy);
+    }
+    .cover .x { color:var(--red); }
+    .cover h1 { position:relative; z-index:2; max-width:760px; }
+    .cover .lead { position:relative; z-index:2; max-width:680px; }
+    .cover-truck {
+      position:absolute;
+      z-index:1;
+      right:0;
+      bottom:7%;
+      width:min(58vw,850px);
+      height:auto;
+      object-fit:contain;
+      filter:drop-shadow(0 22px 38px rgba(0,0,0,.38));
+      opacity:.88;
+    }
+    .cover::after {
+      content:"";
+      position:absolute;
+      right:0;
+      top:22%;
+      width:50%;
+      height:58%;
+      background:radial-gradient(circle, rgba(202,38,52,.32), transparent 68%);
+      z-index:0;
+    }
+    .cover-meta { position:relative; z-index:2; }
+    .statement { background:rgba(255,255,255,.65); padding:16px 22px; border-radius:0 16px 16px 0; box-shadow:0 10px 30px rgba(18,32,51,.05); }
+    .hypothesis-stage { min-height:0; }
+    .hypothesis-panel {
+      min-height:clamp(270px,40vh,380px);
+      padding:clamp(28px,4vw,52px);
+      border-radius:var(--radius);
+      background:linear-gradient(145deg,#142238,#223b52);
+      color:white;
+      box-shadow:var(--shadow);
+    }
+    .hypothesis-panel .small { color:rgba(255,255,255,.65); }
+    .hypothesis-panel .data-node { color:var(--ink); background:rgba(255,255,255,.94); }
+    .hypothesis-panel .billing-step { color:var(--ink); background:rgba(255,255,255,.94); }
+    .hypothesis-note { margin-top:14px; padding:12px 16px; background:rgba(255,255,255,.72); border-radius:10px; }
+
+    .sequence-stage-v2 {
+      display:grid;
+      grid-template-columns:.78fr 1.22fr;
+      gap:clamp(26px,4vw,58px);
+      align-items:stretch;
+      min-height:clamp(255px,40vh,390px);
+      margin-bottom:22px;
+    }
+    .sequence-stage-v2 .sequence-detail {
+      min-height:0;
+      padding:clamp(24px,3vw,42px);
+      border-radius:var(--radius);
+      background:linear-gradient(145deg,var(--navy),#253b55);
+      color:white;
+      box-shadow:var(--shadow);
+      grid-template-columns:72px 1fr;
+    }
+    .sequence-stage-v2 .sequence-index { color:rgba(255,255,255,.16); }
+    .sequence-stage-v2 .sequence-copy p { color:rgba(255,255,255,.72); }
+    .sequence-why {
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+      padding:clamp(24px,3vw,42px);
+      border:1px solid rgba(202,38,52,.20);
+      border-radius:var(--radius);
+      background:rgba(255,255,255,.78);
+    }
+    .sequence-why .micro-title { color:var(--red); font-weight:850; letter-spacing:.13em; font-size:11px; text-transform:uppercase; }
+    .sequence-why h3 { margin:12px 0 16px; font-size:clamp(24px,2.8vw,40px); }
+    .sequence-why p { color:var(--muted); margin:0; }
+    .sequence {
+      position:relative;
+      gap:0;
+      padding:0 8px;
+      border-radius:18px;
+      background:rgba(255,255,255,.76);
+      box-shadow:0 12px 34px rgba(18,32,51,.08);
+    }
+    .sequence::before { content:""; position:absolute; left:5%; right:5%; top:17px; height:3px; background:linear-gradient(90deg,var(--red),rgba(34,184,189,.45)); }
+    .sequence button { position:relative; z-index:1; border-top:0; padding:34px 8px 15px; text-align:center; }
+    .sequence button::before { content:""; position:absolute; top:10px; left:50%; width:17px; height:17px; transform:translateX(-50%); border-radius:50%; background:#d6d9dc; border:4px solid white; box-shadow:0 0 0 1px var(--line); }
+    .sequence button.active::before { background:var(--red); box-shadow:0 0 0 5px rgba(202,38,52,.17); }
+
+    .analysis-layout { display:grid; grid-template-columns:.95fr 1.05fr; gap:clamp(28px,4vw,58px); flex:1; min-height:0; }
+    .unit-selector { display:grid; grid-template-columns:1fr 1fr; gap:9px; align-content:start; }
+    .unit-selector button {
+      border:1px solid var(--line);
+      background:rgba(255,255,255,.78);
+      padding:14px 15px;
+      min-height:64px;
+      color:var(--ink);
+      text-align:left;
+      cursor:pointer;
+      font-weight:760;
+      border-radius:12px;
+    }
+    .unit-selector button span { display:block; color:var(--red); font-size:10px; letter-spacing:.12em; margin-bottom:5px; }
+    .unit-selector button.active, .unit-selector button:hover, .unit-selector button:focus-visible { background:var(--red); color:white; border-color:var(--red); outline:none; }
+    .unit-selector button.active span, .unit-selector button:hover span { color:rgba(255,255,255,.72); }
+    .unit-reading {
+      border-radius:var(--radius);
+      padding:clamp(28px,4vw,50px);
+      background:linear-gradient(150deg,var(--navy),#203a53);
+      color:white;
+      box-shadow:var(--shadow);
+      display:flex;
+      flex-direction:column;
+      justify-content:center;
+    }
+    .unit-reading .unit-code { color:var(--teal); font-size:12px; font-weight:850; letter-spacing:.16em; }
+    .unit-reading h3 { font-size:clamp(28px,3vw,44px); margin:14px 0; }
+    .unit-reading p { color:rgba(255,255,255,.76); }
+    .unit-reading .reading-output { margin-top:auto; padding-top:18px; border-top:1px solid rgba(255,255,255,.18); color:white; font-weight:760; }
+    .analysis-metrics { display:flex; gap:30px; margin-top:18px; }
+    .analysis-metrics b { color:var(--red); font-size:clamp(28px,3vw,42px); margin-right:8px; }
+    .analysis-metrics span { color:var(--muted); font-size:13px; }
+
+    .journey-stage {
+      position:relative;
+      padding:36px 30px 24px;
+      border-radius:var(--radius);
+      background:linear-gradient(150deg,#1a293b,#101a29);
+      color:white;
+      box-shadow:var(--shadow);
+    }
+    .journey-line { position:absolute; left:9%; right:9%; top:75px; height:5px; background:linear-gradient(90deg,var(--red),var(--teal)); border-radius:5px; }
+    .journey-truck { position:absolute; z-index:3; top:18px; left:7%; width:clamp(110px,14vw,195px); filter:drop-shadow(0 12px 18px rgba(0,0,0,.4)); transition:left .45s cubic-bezier(.2,.8,.2,1); }
+    .journey-points { position:relative; z-index:4; display:grid; grid-template-columns:repeat(4,1fr); gap:18px; padding-top:82px; }
+    .journey-point { border:0; background:transparent; color:rgba(255,255,255,.66); cursor:pointer; text-align:center; padding:0; }
+    .journey-point:focus-visible { outline:2px solid var(--teal); outline-offset:5px; }
+    .journey-icon { width:58px; height:58px; margin:0 auto 12px; display:grid; place-items:center; border-radius:50%; background:#29394d; border:2px solid rgba(255,255,255,.2); color:white; font-size:25px; font-weight:850; }
+    .journey-point.active .journey-icon { background:var(--red); border-color:white; box-shadow:0 0 0 7px rgba(202,38,52,.22); }
+    .journey-point b { display:block; color:white; font-size:clamp(15px,1.3vw,19px); }
+    .journey-point span { display:block; font-size:12px; margin-top:5px; }
+    .journey-detail { display:grid; grid-template-columns:.7fr 1.3fr; gap:28px; padding:22px 28px; border-radius:0 0 var(--radius) var(--radius); background:white; box-shadow:0 18px 50px rgba(18,32,51,.10); }
+    .journey-detail .label { color:var(--red); font-weight:850; letter-spacing:.12em; font-size:11px; text-transform:uppercase; }
+    .journey-detail h3 { margin:8px 0 0; }
+    .journey-detail p { margin:0; color:var(--muted); }
+
+    .deliverables-v2 { display:grid; grid-template-columns:1fr 1.05fr; gap:clamp(24px,4vw,56px); flex:1; min-height:0; }
+    .deliverable-menu { display:grid; grid-template-columns:repeat(2,1fr); gap:8px; align-content:start; }
+    .deliverable-menu button { border:1px solid var(--line); background:rgba(255,255,255,.78); padding:13px 14px; min-height:58px; text-align:left; border-radius:11px; cursor:pointer; color:var(--ink); font-weight:740; }
+    .deliverable-menu button span { color:var(--red); margin-right:7px; font-size:11px; }
+    .deliverable-menu button.active, .deliverable-menu button:hover, .deliverable-menu button:focus-visible { color:white; background:var(--red); border-color:var(--red); outline:none; }
+    .deliverable-menu button.active span, .deliverable-menu button:hover span { color:white; }
+    .deliverable-detail { padding:clamp(28px,4vw,52px); background:linear-gradient(145deg,#fff,#e7eef0); border:1px solid rgba(23,106,137,.18); border-radius:var(--radius); box-shadow:var(--shadow); display:flex; flex-direction:column; justify-content:center; }
+    .deliverable-detail .detail-no { font-size:clamp(50px,7vw,92px); line-height:.8; font-weight:880; color:rgba(202,38,52,.13); }
+    .deliverable-detail h3 { font-size:clamp(28px,3vw,44px); margin:18px 0 12px; }
+    .deliverable-detail p { color:var(--muted); }
+    .deliverable-detail .decision-use { margin-top:auto; padding-top:18px; border-top:1px solid var(--line); font-weight:780; color:var(--blue); }
+
+    .roadmap-route {
+      position:relative;
+      height:112px;
+      margin:8px 0 20px;
+      border-radius:20px;
+      background:linear-gradient(180deg,#24394d,#111b2a);
+      overflow:hidden;
+    }
+    .roadmap-route::before { content:""; position:absolute; left:7%; right:7%; bottom:29px; height:5px; background:repeating-linear-gradient(90deg,rgba(255,255,255,.7) 0 28px,transparent 28px 46px); }
+    .roadmap-truck { position:absolute; left:3%; bottom:22px; width:clamp(125px,16vw,220px); transition:left .5s cubic-bezier(.2,.8,.2,1); filter:drop-shadow(0 9px 14px rgba(0,0,0,.55)); }
+    .route-stations { position:absolute; inset:0 6%; display:grid; grid-template-columns:repeat(4,1fr); align-items:end; padding-bottom:13px; }
+    .route-stations span { width:13px; height:13px; margin:auto; border-radius:50%; background:white; border:3px solid var(--red); }
+    .roadmap-stage { min-height:225px; border-radius:var(--radius); padding:clamp(24px,3vw,38px); background:white; box-shadow:0 14px 42px rgba(18,32,51,.09); }
+    .roadmap-outcomes { display:flex; flex-wrap:wrap; gap:9px; margin-top:18px; }
+    .roadmap-outcomes span { padding:7px 10px; background:#e8eff0; color:var(--blue); border-radius:7px; font-size:12px; font-weight:760; }
+
+    .layer-stage { grid-template-columns:.62fr 1.38fr; }
+    .layer-menu { background:white; padding:12px 20px; border-radius:18px; box-shadow:0 12px 38px rgba(18,32,51,.08); }
+    .layer-menu button { padding:12px 0; }
+    .layer-visual { border-radius:var(--radius); background:linear-gradient(145deg,#0f1b2b,#223c56); box-shadow:var(--shadow); overflow:hidden; min-height:430px; }
+    .layer-visual::before { content:""; position:absolute; width:260px; height:260px; border-radius:50%; background:rgba(34,184,189,.12); filter:blur(15px); top:-70px; right:-50px; }
+    .ring { border-color:rgba(255,255,255,.22); }
+    .rings[data-layer="fleet"] .ring:nth-child(1), .rings[data-layer="operations"] .ring:nth-child(1),
+    .rings[data-layer="energy"] .ring:nth-child(2), .rings[data-layer="maintenance"] .ring:nth-child(2),
+    .rings[data-layer="safety"] .ring:nth-child(3), .rings[data-layer="commercial"] .ring:nth-child(3),
+    .rings[data-layer="financial"] .ring:nth-child(3) { border-color:var(--teal); box-shadow:0 0 44px rgba(34,184,189,.42); }
+    .layer-label { color:white; background:var(--red); top:8%; right:8%; }
+    .layer-insight { position:absolute; z-index:5; left:7%; right:7%; bottom:6%; color:rgba(255,255,255,.78); text-align:center; font-size:clamp(13px,1.15vw,17px); }
+
+    .weeks-v2 { display:grid; grid-template-columns:1.22fr .78fr; gap:clamp(24px,4vw,52px); flex:1; min-height:0; }
+    .week-map { position:relative; border-radius:var(--radius); background:linear-gradient(145deg,#1b2d42,#101a29); padding:28px 25px; box-shadow:var(--shadow); overflow:hidden; }
+    .week-road { position:absolute; top:50%; left:9%; right:9%; height:6px; background:linear-gradient(90deg,var(--red),var(--teal)); }
+    .week-truck { position:absolute; top:calc(50% - 56px); left:4%; width:clamp(120px,15vw,205px); transition:left .45s ease; filter:drop-shadow(0 10px 18px rgba(0,0,0,.5)); }
+    .week-buttons { position:relative; z-index:4; display:grid; grid-template-columns:repeat(4,1fr); height:100%; align-items:end; gap:10px; }
+    .week-buttons button { border:0; background:transparent; color:rgba(255,255,255,.63); cursor:pointer; min-height:120px; padding-top:65px; font-weight:760; }
+    .week-buttons button::before { content:""; display:block; width:18px; height:18px; border-radius:50%; background:white; border:4px solid var(--red); margin:0 auto 14px; }
+    .week-buttons button.active { color:white; }
+    .week-buttons button.active::before { background:var(--red); box-shadow:0 0 0 7px rgba(202,38,52,.22); }
+    .week-detail { border-radius:var(--radius); padding:clamp(26px,3.4vw,46px); background:white; box-shadow:0 12px 38px rgba(18,32,51,.09); display:flex; flex-direction:column; justify-content:center; }
+    .week-detail .week-no { color:var(--red); font-size:12px; font-weight:850; letter-spacing:.15em; }
+    .week-detail h3 { font-size:clamp(27px,3vw,42px); margin:12px 0; }
+    .week-detail p { color:var(--muted); }
+    .week-result { margin-top:auto; padding-top:18px; border-top:1px solid var(--line); color:var(--blue); font-weight:780; }
+
+    .pricing-v2 { display:grid; grid-template-columns:.9fr 1.1fr; gap:0; border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow); flex:1; min-height:0; }
+    .price-panel { background:linear-gradient(145deg,var(--red-dark),var(--red)); color:white; padding:clamp(28px,4vw,54px); display:flex; flex-direction:column; justify-content:center; }
+    .price-panel .list-price { color:rgba(255,255,255,.6); }
+    .price-panel .small { color:rgba(255,255,255,.78); }
+    .price-panel .offer { color:white; }
+    .price-panel .offer small { color:rgba(255,255,255,.72); }
+    .price-panel .payment div { border-color:rgba(255,255,255,.5); }
+    .price-panel .payment span { color:rgba(255,255,255,.75); font-size:13px; }
+    .commercial-scope { background:linear-gradient(145deg,#142238,#243b52); color:white; padding:clamp(28px,4vw,54px); display:grid; grid-template-rows:auto auto 1fr; }
+    .commercial-scope p { color:rgba(255,255,255,.68); font-size:clamp(13px,1.05vw,16px); }
+    .commercial-list { display:grid; grid-template-columns:1fr 1fr; gap:10px 22px; margin:14px 0 24px; }
+    .commercial-list span { border-bottom:1px solid rgba(255,255,255,.14); padding:7px 0; font-size:13px; }
+    .exclusions { align-self:end; border-top:1px solid rgba(255,255,255,.2); padding-top:15px; }
+
+    .close { padding-top:clamp(98px,12vh,126px); }
+    .close .brandbar { background:white; }
+    .close .brandbar .slide-no { color:var(--muted); }
+    .close .question-small { color:var(--teal); font-weight:760; letter-spacing:.08em; text-transform:uppercase; }
+    .close h2 { max-width:920px; position:relative; z-index:2; }
+    .close-route { display:grid; grid-template-columns:repeat(4,1fr); gap:12px; max-width:950px; position:relative; z-index:2; }
+    .close-route span { padding:14px 16px; border-top:3px solid var(--red); background:rgba(255,255,255,.07); color:rgba(255,255,255,.82); font-weight:730; }
+    .close-truck { position:absolute; right:0; bottom:4%; width:min(52vw,760px); opacity:.23; filter:grayscale(.2) drop-shadow(0 20px 30px rgba(0,0,0,.5)); }
+    .close .tagline { position:relative; z-index:3; border-top:1px solid rgba(255,255,255,.18); padding-top:22px; }
+    .close .tagline img { background:rgba(255,255,255,.05); padding:10px 14px; border-radius:8px; max-width:min(280px,32vw); }
+
+    @media (max-width:900px) {
+      .analysis-layout, .deliverables-v2, .weeks-v2, .pricing-v2, .sequence-stage-v2 { grid-template-columns:1fr; }
+      .brandbar .transpesa { max-width:170px; }
+      .brandbar .assegura { max-width:145px; }
+      .cover-truck { width:72vw; opacity:.45; }
+      .journey-stage { padding-left:16px; padding-right:16px; }
+      .journey-line { display:none; }
+      .journey-truck { opacity:.28; }
+      .layer-stage { grid-template-columns:1fr; }
+      .pricing-v2 { overflow:visible; }
+    }
+    @media (max-width:620px) {
+      .brandbar { padding-left:20px; padding-right:20px; }
+      .brandbar .transpesa { max-width:145px; }
+      .brandbar .assegura { display:block; max-width:120px; }
+      .brand-pair::after { display:none; }
+      .cover .cover-marks { padding-left:20px; padding-right:20px; }
+      .cover .cover-marks .transpesa { max-width:42vw; }
+      .cover .cover-marks .assegura { max-width:41vw; }
+      .cover .x { display:none; }
+      .unit-selector, .deliverable-menu, .commercial-list { grid-template-columns:1fr; }
+      .analysis-metrics { flex-wrap:wrap; }
+      .journey-points, .week-buttons { grid-template-columns:repeat(2,1fr); }
+      .journey-detail { grid-template-columns:1fr; }
+      .roadmap-route { height:90px; }
+      .roadmap-truck, .week-truck { opacity:.55; }
+      .close-route { grid-template-columns:repeat(2,1fr); }
+    }
+    @media (max-height:760px) and (min-width:901px) {
+      .slide { padding-top:84px; padding-bottom:78px; }
+      .slide.cover { padding-top:104px; }
+      h2 { font-size:clamp(30px,3.75vw,48px); margin-bottom:18px; }
+      .eyebrow, .vision-flag { margin-bottom:8px; }
+      .sequence-stage-v2 { min-height:245px; margin-bottom:14px; }
+      .sequence-stage-v2 .sequence-detail, .sequence-why { padding:24px 28px; }
+      .unit-selector button { min-height:56px; padding:10px 13px; }
+      .analysis-metrics { margin-top:10px; }
+      .unit-reading { padding:28px 40px; }
+      .journey-stage { padding:24px 26px 17px; }
+      .hypothesis-panel { min-height:270px; padding:30px 38px; }
+      .journey-line { top:61px; }
+      .journey-truck { top:12px; width:145px; }
+      .journey-points { padding-top:62px; }
+      .journey-icon { width:52px; height:52px; }
+      .journey-detail { padding:15px 25px; }
+      .deliverable-menu button { min-height:52px; padding:10px 13px; }
+      .deliverable-detail { padding:30px 42px; }
+      .roadmap-nav { margin-bottom:14px; }
+      .roadmap-route { height:82px; margin-bottom:14px; }
+      .roadmap-truck { width:175px; bottom:17px; }
+      .roadmap-route::before { bottom:23px; }
+      .route-stations { padding-bottom:8px; }
+      .roadmap-stage { min-height:205px; padding:22px 32px; }
+      .layer-visual { min-height:365px; }
+      .rings { width:450px; }
+      .scope-strip { margin-bottom:16px; }
+      .week-map { padding:18px 22px; }
+      .week-buttons button { min-height:94px; padding-top:46px; }
+      .week-truck { top:calc(50% - 48px); width:155px; }
+      .week-detail { padding:28px 38px; }
+      .pricing-v2 { margin-bottom:10px; }
+      .price-panel, .commercial-scope { padding:30px 50px; }
+      .commercial-list { margin:8px 0 14px; }
+      .close { padding-top:88px; padding-bottom:88px; }
+      .close h2 { font-size:clamp(38px,5vw,64px); margin-bottom:20px; }
+      .close-route span { padding:10px 14px; }
+      .close .lead { font-size:20px; margin-top:14px !important; }
+      .close .tagline { padding-top:13px; margin-bottom:8px; }
+      .close .tagline img { max-width:220px; }
+    }
+  </style>
+</head>
+<body>
+  <main class="deck" aria-live="polite">
+    <section class="slide cover active" data-title="Portada">
+      <div class="cover-marks">
+        <img class="transpesa" src="assets/logo-transpesa.png" alt="Grupo TRANSPESA">
+        <span class="x">×</span>
+        <img class="assegura" src="assets/logo-assegura-ai.png" alt="ASSEGURA AI">
+      </div>
+      <p class="eyebrow" style="color:#57d2d3">AATMF v1.0</p>
+      <h1>Diagnóstico Empresarial de Transformación</h1>
+      <p class="lead">Conectar procesos, tecnología y datos para decidir mejor y anticiparse.</p>
+      <img class="cover-truck" src="assets/truck-progress.png" alt="Ilustración conceptual de un camión de transporte">
+      <div class="cover-meta"><span>Propuesta ejecutiva</span><span>TRANSPESA</span><span>ASSEGURA AI</span></div>
+    </section>
+
+    <section class="slide" data-title="Punto de partida">
+      <div class="brandbar"><div class="brand-pair"><img class="transpesa" src="assets/logo-transpesa.png" alt="Grupo TRANSPESA"><img class="assegura" src="assets/logo-assegura-ai.png" alt="ASSEGURA AI"></div><span class="slide-no">02 / 14</span></div>
+      <p class="eyebrow">Punto de partida</p>
+      <h2>TRANSPESA ya cuenta con capacidades relevantes</h2>
+      <div class="capability-line">
+        <div class="capability"><b>Telemetría</b><span>Información operacional de la flota</span></div>
+        <div class="capability"><b>GPS</b><span>Seguimiento de vehículos</span></div>
+        <div class="capability"><b>Eficiencia</b><span>Rendimiento y costo por kilómetro</span></div>
+        <div class="capability"><b>Conductores</b><span>Formación y seguimiento</span></div>
+        <div class="capability"><b>Flota GNL</b><span>Nuevas posibilidades de información</span></div>
+        <div class="capability"><b>Operación</b><span>Planificación y seguimiento de viajes</span></div>
+      </div>
+      <p class="statement push">El siguiente desafío consiste en determinar dónde conectar mejor procesos, tecnología y datos para generar mayor valor.</p>
+    </section>
+
+    <section class="slide" data-title="Señales iniciales">
+      <div class="brandbar"><div class="brand-pair"><img class="transpesa" src="assets/logo-transpesa.png" alt="Grupo TRANSPESA"><img class="assegura" src="assets/logo-assegura-ai.png" alt="ASSEGURA AI"></div><span class="slide-no">03 / 14</span></div>
+      <p class="eyebrow">Lo que escuchamos</p>
+      <h2>La conversación inicial reveló señales en distintas partes del negocio</h2>
+      <div class="signal-grid">
+        <div class="signal"><h3>Operación <span>01</span></h3><p>Tiempos de viaje, disponibilidad y rotación de unidades</p></div>
+        <div class="signal"><h3>Activos <span>02</span></h3><p>Mantenimiento, tractores, semirremolques y neumáticos</p></div>
+        <div class="signal"><h3>Personas <span>03</span></h3><p>Conductores, descanso, comportamiento y seguridad</p></div>
+        <div class="signal"><h3>Datos <span>04</span></h3><p>GPS, telemetría, reportes e información distribuida</p></div>
+        <div class="signal"><h3>Gestión <span>05</span></h3><p>Excel, correo, WhatsApp y preparación manual de información</p></div>
+        <div class="signal"><h3>Finanzas <span>06</span></h3><p>Orden de compra, facturación, cobranza y capital de trabajo</p></div>
+      </div>
+      <p class="statement push">El diagnóstico determinará cuáles señales representan oportunidades de mayor impacto.</p>
+    </section>
+
+    <section class="slide" data-title="Hipótesis a validar">
+      <div class="brandbar"><div class="brand-pair"><img class="transpesa" src="assets/logo-transpesa.png" alt="Grupo TRANSPESA"><img class="assegura" src="assets/logo-assegura-ai.png" alt="ASSEGURA AI"></div><span class="slide-no">04 / 14</span></div>
+      <p class="eyebrow">Por qué diagnosticar primero</p>
+      <h2>Dos hipótesis surgidas de la conversación</h2>
+      <div class="hypothesis-tabs" role="tablist" aria-label="Hipótesis">
+        <button class="tab active" role="tab" aria-selected="true" data-hypothesis="fleet">Fleet Intelligence</button>
+        <button class="tab" role="tab" aria-selected="false" data-hypothesis="billing">Ciclo de facturación</button>
+      </div>
+      <div class="hypothesis-stage">
+        <div class="hypothesis-panel active" data-panel="fleet">
+          <div><p class="question">¿Qué valor adicional podría generarse si estos datos se analizaran de manera integrada?</p><p class="small">Posibles variables de evaluación: disponibilidad, eficiencia, seguridad, alertas y anticipación.</p></div>
+          <div class="data-chain"><span class="data-node">Vehículo</span><span class="data-node">Conductor</span><span class="data-node">Ruta</span><span class="data-node">Carga</span><span class="data-node">GNL</span><span class="data-node">Mantenimiento</span><span class="data-node">Neumáticos</span><span class="data-node">Seguridad</span></div>
+        </div>
+        <div class="hypothesis-panel" data-panel="billing">
+          <div><p class="question">¿Existen oportunidades para reducir tiempos, intervención manual y capital de trabajo?</p><p class="small">El análisis comprobará tiempos, responsables, transferencias y fuentes de evidencia.</p></div>
+          <div class="billing-flow"><div class="billing-step">Servicio realizado</div><div class="billing-step">Orden de compra</div><div class="billing-step">Facturación</div><div class="billing-step">Cobranza</div></div>
+        </div>
+      </div>
+      <div class="hypothesis-note">El diagnóstico parte de evidencia para determinar qué transformar primero.</div>
+    </section>
+
+    <section class="slide" data-title="Propuesta AATMF">
+      <div class="brandbar"><div class="brand-pair"><img class="transpesa" src="assets/logo-transpesa.png" alt="Grupo TRANSPESA"><img class="assegura" src="assets/logo-assegura-ai.png" alt="ASSEGURA AI"></div><span class="slide-no">05 / 14</span></div>
+      <p class="eyebrow">Lo que proponemos</p>
+      <h2>Diagnóstico Empresarial de Transformación</h2>
+      <div class="aatmf-core">
+        <div class="aatmf-mark"><strong>AATMF<br>v1.0</strong></div>
+        <div>
+          <p class="lead">ASSEGURA AI Transformation Maturity Framework evalúa cómo se relacionan las capacidades que permiten transformar el negocio.</p>
+          <div class="dimensions">
+            <div class="dimension"><span>01</span>Personas</div><div class="dimension"><span>02</span>Procesos</div>
+            <div class="dimension"><span>03</span>Datos</div><div class="dimension"><span>04</span>Tecnología</div>
+            <div class="dimension"><span>05</span>Gestión</div><div class="dimension"><span>06</span>Capacidad de transformación</div>
+          </div>
+        </div>
+      </div>
+      <p class="statement push">El resultado mostrará la situación actual, las brechas y las iniciativas que conviene priorizar.</p>
+    </section>
+
+    <section class="slide" data-title="Cadena de evidencia">
+      <div class="brandbar"><div class="brand-pair"><img class="transpesa" src="assets/logo-transpesa.png" alt="Grupo TRANSPESA"><img class="assegura" src="assets/logo-assegura-ai.png" alt="ASSEGURA AI"></div><span class="slide-no">06 / 14</span></div>
+      <p class="eyebrow">Cómo llegamos a las conclusiones</p>
+      <h2>La evidencia conduce cada decisión</h2>
+      <div class="sequence-stage-v2">
+        <div class="sequence-detail" aria-live="polite"><div class="sequence-index">01</div><div class="sequence-copy"><h3>Evidencia</h3><p>Entrevistas, documentos, indicadores, reportes y muestras operacionales forman la base del análisis.</p></div></div>
+        <div class="sequence-why"><span class="micro-title">Qué produce esta etapa</span><h3 class="sequence-output">Base verificable del diagnóstico</h3><p class="sequence-question">¿Qué información existe, quién la genera y qué decisión permite sustentar?</p></div>
+      </div>
+      <div class="sequence" role="tablist" aria-label="Secuencia AATMF">
+        <button class="active" data-step="0">Evidencia</button><button data-step="1">Madurez</button><button data-step="2">Brecha</button><button data-step="3">Causa</button><button data-step="4">Oportunidad</button><button data-step="5">Recomendación</button><button data-step="6">Iniciativa</button><button data-step="7">Priorización</button>
+      </div>
+      <p class="small push"><b>Selecciona cada etapa.</b> La lectura avanza desde la evidencia hasta una decisión de prioridad trazable.</p>
+    </section>
+
+    <section class="slide" data-title="Unidades de análisis">
+      <div class="brandbar"><div class="brand-pair"><img class="transpesa" src="assets/logo-transpesa.png" alt="Grupo TRANSPESA"><img class="assegura" src="assets/logo-assegura-ai.png" alt="ASSEGURA AI"></div><span class="slide-no">07 / 14</span></div>
+      <p class="eyebrow">Qué analizaremos</p>
+      <h2>Una lectura transversal de TRANSPESA</h2>
+      <div class="analysis-layout">
+        <div>
+          <div class="unit-selector" role="tablist" aria-label="Unidades de análisis">
+            <button class="active" data-unit="0"><span>01</span>Dirección / Gerencia</button><button data-unit="1"><span>02</span>Operaciones y planificación</button>
+            <button data-unit="2"><span>03</span>Flota y telemetría</button><button data-unit="3"><span>04</span>Mantenimiento</button>
+            <button data-unit="4"><span>05</span>Neumáticos</button><button data-unit="5"><span>06</span>Seguridad y conductores</button>
+            <button data-unit="6"><span>07</span>Administración / Facturación / Finanzas</button><button data-unit="7"><span>08</span>Tecnología / Sistemas / Datos</button>
+          </div>
+          <div class="analysis-metrics"><div><b>8</b><span>dimensiones AATMF</span></div><div><b>40</b><span>criterios</span></div></div>
+        </div>
+        <div class="unit-reading" aria-live="polite"><span class="unit-code">LECTURA 01</span><h3>Dirección / Gerencia</h3><p>Revisaremos cómo se definen prioridades, cómo se patrocinan los cambios y qué información utiliza la gerencia para decidir.</p><div class="reading-output">Resultado esperado: criterios claros de gobierno, decisión y seguimiento.</div></div>
+      </div>
+      <p class="small push"><b>Selecciona una unidad.</b> El inicio del diagnóstico confirmará el alcance final según la estructura real de TRANSPESA.</p>
+    </section>
+
+    <section class="slide" data-title="Requerimientos">
+      <div class="brandbar"><div class="brand-pair"><img class="transpesa" src="assets/logo-transpesa.png" alt="Grupo TRANSPESA"><img class="assegura" src="assets/logo-assegura-ai.png" alt="ASSEGURA AI"></div><span class="slide-no">08 / 14</span></div>
+      <p class="eyebrow">Qué necesitamos de TRANSPESA</p>
+      <h2>Participación enfocada, evidencia representativa y validación</h2>
+      <div class="journey-stage">
+        <div class="journey-line"></div><img class="journey-truck" src="assets/truck-progress.png" alt="Camión conceptual que indica el avance">
+        <div class="journey-points" role="tablist" aria-label="Requerimientos del diagnóstico">
+          <button class="journey-point active" data-need="0"><span class="journey-icon">●●</span><b>Personas</b><span>8–12 responsables</span></button>
+          <button class="journey-point" data-need="1"><span class="journey-icon">▦</span><b>Evidencia</b><span>Muestras relevantes</span></button>
+          <button class="journey-point" data-need="2"><span class="journey-icon">⌘</span><b>Sistemas y datos</b><span>Fuentes y conexiones</span></button>
+          <button class="journey-point" data-need="3"><span class="journey-icon">✓</span><b>Validación</b><span>Hallazgos y prioridades</span></button>
+        </div>
+      </div>
+      <div class="journey-detail" aria-live="polite"><div><span class="label">Punto 01</span><h3>Personas clave</h3></div><p>Entrevistas de 45–75 minutos con responsables que conocen la operación, las decisiones y las excepciones del proceso.</p></div>
+      <p class="small push">El diagnóstico no requiere intervenir la operación ni acceder indiscriminadamente a información sensible.</p>
+    </section>
+
+    <section class="slide" data-title="Entregables">
+      <div class="brandbar"><div class="brand-pair"><img class="transpesa" src="assets/logo-transpesa.png" alt="Grupo TRANSPESA"><img class="assegura" src="assets/logo-assegura-ai.png" alt="ASSEGURA AI"></div><span class="slide-no">09 / 14</span></div>
+      <p class="eyebrow">Qué recibirá TRANSPESA</p>
+      <h2>Una base ejecutiva para decidir qué transformar primero</h2>
+      <div class="deliverables-v2">
+        <div class="deliverable-menu" role="tablist" aria-label="Entregables">
+          <button class="active" data-deliverable="0"><span>01</span>AATMI</button><button data-deliverable="1"><span>02</span>Mapa de madurez</button>
+          <button data-deliverable="2"><span>03</span>Mapa procesos–sistemas–datos</button><button data-deliverable="3"><span>04</span>Hallazgos y brechas</button>
+          <button data-deliverable="4"><span>05</span>Mapa de oportunidades</button><button data-deliverable="5"><span>06</span>Portafolio de iniciativas</button>
+          <button data-deliverable="6"><span>07</span>Priorización</button><button data-deliverable="7"><span>08</span>Roadmap</button>
+        </div>
+        <div class="deliverable-detail" aria-live="polite"><span class="detail-no">01</span><h3>AATMI</h3><p>Índice ejecutivo que sintetiza la madurez de transformación y permite comparar dimensiones bajo una misma escala.</p><div class="decision-use">Permite reconocer dónde existe capacidad instalada y dónde una brecha limita la transformación.</div></div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Roadmap">
+      <div class="brandbar"><div class="brand-pair"><img class="transpesa" src="assets/logo-transpesa.png" alt="Grupo TRANSPESA"><img class="assegura" src="assets/logo-assegura-ai.png" alt="ASSEGURA AI"></div><span class="slide-no">10 / 14</span></div>
+      <p class="eyebrow">De oportunidades a decisiones</p>
+      <h2>Executive Transformation Blueprint</h2>
+      <div class="roadmap-nav" role="tablist" aria-label="Horizontes del roadmap">
+        <button class="chip active" data-roadmap="0">0–90 días</button><button class="chip" data-roadmap="1">3–6 meses</button><button class="chip" data-roadmap="2">6–12 meses</button><button class="chip" data-roadmap="3">+12 meses</button>
+      </div>
+      <div class="roadmap-route"><div class="route-stations"><span></span><span></span><span></span><span></span></div><img class="roadmap-truck" src="assets/truck-progress.png" alt="Camión conceptual que avanza por el roadmap"></div>
+      <div class="roadmap-stage" aria-live="polite"><div class="roadmap-window">0–90<br>días</div><div class="roadmap-copy"><h3>Quick wins y fundamentos</h3><p>Estabilizar datos críticos, resolver fricciones evidentes y preparar las dependencias que habilitan los siguientes horizontes.</p><div class="roadmap-outcomes"><span>Datos críticos</span><span>Responsables</span><span>Reglas mínimas</span><span>Victorias tempranas</span></div></div></div>
+      <p class="small push"><b>Selecciona un horizonte.</b> El camión muestra el avance y el contenido explica qué se construye en cada etapa.</p>
+    </section>
+
+    <section class="slide" data-title="TRANSPESA Intelligence Layer">
+      <div class="brandbar"><div class="brand-pair"><img class="transpesa" src="assets/logo-transpesa.png" alt="Grupo TRANSPESA"><img class="assegura" src="assets/logo-assegura-ai.png" alt="ASSEGURA AI"></div><span class="slide-no">11 / 14</span></div>
+      <p class="vision-flag">Visión ilustrativa · su pertinencia deberá validarse</p>
+      <h2>TRANSPESA Intelligence Layer</h2>
+      <div class="layer-stage">
+        <div class="layer-menu" role="tablist" aria-label="Capas de inteligencia">
+          <button class="active" data-layer="fleet">Fleet Intelligence</button><button data-layer="energy">Energy Intelligence</button><button data-layer="maintenance">Maintenance Intelligence</button><button data-layer="safety">Safety Intelligence</button><button data-layer="operations">Operations Intelligence</button><button data-layer="commercial">Commercial Intelligence</button><button data-layer="financial">Financial Intelligence</button>
+        </div>
+        <div class="layer-visual"><div class="rings" data-layer="fleet"><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="ring"></div><div class="core-label">DATA &amp;<br>INTELLIGENCE<br>LAYER</div><div class="layer-label">Fleet Intelligence</div></div><div class="layer-insight">Integra vehículo, conductor, ruta, carga y contexto operacional para evaluar disponibilidad, eficiencia y anticipación.</div></div>
+      </div>
+      <p class="small push">El diagnóstico determinará qué componentes tienen sentido para TRANSPESA, en qué orden y con qué nivel de inversión. Esta visión no representa un resultado del diagnóstico.</p>
+    </section>
+
+    <section class="slide" data-title="Alcance y duración">
+      <div class="brandbar"><div class="brand-pair"><img class="transpesa" src="assets/logo-transpesa.png" alt="Grupo TRANSPESA"><img class="assegura" src="assets/logo-assegura-ai.png" alt="ASSEGURA AI"></div><span class="slide-no">12 / 14</span></div>
+      <p class="eyebrow">Alcance del diagnóstico</p>
+      <h2>3–4 semanas para convertir evidencia en una ruta priorizada</h2>
+      <div class="scope-strip"><div class="scope-item"><b>8</b><span>unidades de análisis</span></div><div class="scope-item"><b>8–12</b><span>participantes clave</span></div><div class="scope-item"><b>8–10</b><span>sesiones aproximadas</span></div><div class="scope-item"><b>Híbrida</b><span>presencial + virtual</span></div></div>
+      <div class="weeks-v2">
+        <div class="week-map"><div class="week-road"></div><img class="week-truck" src="assets/truck-progress.png" alt="Camión conceptual que avanza durante el diagnóstico"><div class="week-buttons" role="tablist" aria-label="Semanas del diagnóstico"><button class="active" data-week="0">Semana 1</button><button data-week="1">Semana 2</button><button data-week="2">Semana 3</button><button data-week="3">Semana 4</button></div></div>
+        <div class="week-detail" aria-live="polite"><span class="week-no">SEMANA 1</span><h3>Descubrimiento</h3><p>Entrevistas, evidencia inicial, sistemas relevantes y confirmación del alcance.</p><div class="week-result">Resultado: base de evidencia y agenda de análisis confirmadas.</div></div>
+      </div>
+    </section>
+
+    <section class="slide" data-title="Inversión">
+      <div class="brandbar"><div class="brand-pair"><img class="transpesa" src="assets/logo-transpesa.png" alt="Grupo TRANSPESA"><img class="assegura" src="assets/logo-assegura-ai.png" alt="ASSEGURA AI"></div><span class="slide-no">13 / 14</span></div>
+      <p class="eyebrow">Propuesta comercial</p>
+      <h2>Diagnóstico Empresarial de Transformación</h2>
+      <div class="pricing-v2">
+        <div class="price-panel">
+          <p class="small strong">Valor del servicio</p><div class="list-price">S/ 14,900 + IGV</div>
+          <p class="small strong">Inversión introductoria</p><div class="offer">S/ 9,900<small>+ IGV · vigencia 15 días</small></div>
+          <div class="payment"><div><b>50%</b><span>al inicio</span></div><div><b>50%</b><span>contra entrega del Informe Ejecutivo y antes de la presentación final</span></div></div>
+        </div>
+        <div class="commercial-scope">
+          <div><h3>La inversión cubre el diagnóstico completo</h3><p>Incluye análisis, validación y una ruta ejecutiva para decidir las siguientes inversiones.</p></div>
+          <div class="commercial-list"><span>AATMI</span><span>Mapa de madurez</span><span>Mapa procesos–sistemas–datos</span><span>Hallazgos y brechas</span><span>Mapa de oportunidades</span><span>Portafolio de iniciativas</span><span>Priorización</span><span>Roadmap e Informe Ejecutivo</span></div>
+          <div class="exclusions"><b>No incluye</b><p>Implementación de iniciativas, desarrollo de software, hardware, integraciones o licencias de terceros.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="slide close" data-title="Cierre">
+      <div class="brandbar"><div class="brand-pair"><img class="transpesa" src="assets/logo-transpesa.png" alt="Grupo TRANSPESA"><img class="assegura" src="assets/logo-assegura-ai.png" alt="ASSEGURA AI"></div><span class="slide-no">14 / 14</span></div>
+      <p class="question-small">La pregunta central</p>
+      <h2>¿Dónde puede TRANSPESA generar mayor valor conectando lo que ya tiene?</h2>
+      <div class="close-route"><span>Procesos</span><span>Personas</span><span>Tecnología</span><span>Datos</span></div>
+      <p class="lead" style="color:rgba(255,255,255,.72);margin-top:22px">La evidencia conectará estas capacidades con decisiones, anticipación y transformación.</p>
+      <img class="close-truck" src="assets/truck-progress.png" alt="Camión conceptual de cierre">
+      <div class="tagline"><img src="assets/logo-assegura-ai.png" alt="ASSEGURA AI"><p>Deja de reaccionar. Empieza a anticiparte.</p></div>
+    </section>
+  </main>
+
+  <nav class="controls" aria-label="Navegación de la presentación">
+    <button id="prev" type="button" aria-label="Diapositiva anterior">←</button>
+    <span class="counter" id="counter">01 / 14</span>
+    <button id="next" type="button" aria-label="Diapositiva siguiente">→</button>
+    <button id="fullscreen" type="button" aria-label="Pantalla completa" title="Pantalla completa">⛶</button>
+  </nav>
+  <div class="progress" aria-hidden="true"><span id="progress"></span></div>
+  <div class="hint">← → navegar · F pantalla completa</div>
+
+  <script>
+    (() => {
+      const slides = [...document.querySelectorAll('.slide')];
+      const counter = document.getElementById('counter');
+      const progress = document.getElementById('progress');
+      let current = Math.max(0, Math.min(slides.length - 1, (parseInt(location.hash.replace('#slide-', ''), 10) || 1) - 1));
+      let touchX = 0;
+
+      function show(index, updateHash = true) {
+        current = (index + slides.length) % slides.length;
+        slides.forEach((slide, i) => {
+          const active = i === current;
+          slide.classList.toggle('active', active);
+          slide.setAttribute('aria-hidden', String(!active));
+          if (active) slide.scrollTop = 0;
+        });
+        counter.textContent = `${String(current + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+        progress.style.width = `${((current + 1) / slides.length) * 100}%`;
+        document.title = `${slides[current].dataset.title} — TRANSPESA`;
+        if (updateHash) history.replaceState(null, '', `#slide-${current + 1}`);
+      }
+      const next = () => show(current + 1);
+      const prev = () => show(current - 1);
+      document.getElementById('next').addEventListener('click', next);
+      document.getElementById('prev').addEventListener('click', prev);
+      document.getElementById('fullscreen').addEventListener('click', () => document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen());
+      addEventListener('keydown', e => {
+        if (['ArrowRight', 'PageDown', ' '].includes(e.key)) { e.preventDefault(); next(); }
+        if (['ArrowLeft', 'PageUp'].includes(e.key)) { e.preventDefault(); prev(); }
+        if (e.key === 'Home') show(0);
+        if (e.key === 'End') show(slides.length - 1);
+        if (e.key.toLowerCase() === 'f') document.fullscreenElement ? document.exitFullscreen() : document.documentElement.requestFullscreen();
+      });
+      addEventListener('hashchange', () => show((parseInt(location.hash.replace('#slide-', ''), 10) || 1) - 1, false));
+      addEventListener('touchstart', e => touchX = e.changedTouches[0].clientX, {passive:true});
+      addEventListener('touchend', e => { const delta = e.changedTouches[0].clientX - touchX; if (Math.abs(delta) > 60) delta < 0 ? next() : prev(); }, {passive:true});
+
+      document.querySelectorAll('[data-hypothesis]').forEach(btn => btn.addEventListener('click', () => {
+        document.querySelectorAll('[data-hypothesis]').forEach(b => { b.classList.toggle('active', b === btn); b.setAttribute('aria-selected', String(b === btn)); });
+        document.querySelectorAll('[data-panel]').forEach(panel => panel.classList.toggle('active', panel.dataset.panel === btn.dataset.hypothesis));
+      }));
+
+      const sequenceData = [
+        ['Evidencia','Entrevistas, documentos, indicadores, reportes y muestras operacionales forman la base del análisis.','Base verificable del diagnóstico','¿Qué información existe, quién la genera y qué decisión permite sustentar?'],
+        ['Madurez','AATMF valora la capacidad actual con criterios consistentes y trazables.','Lectura comparable de la capacidad actual','¿La práctica depende de personas, está estructurada o funciona de manera integrada?'],
+        ['Brecha','La comparación entre capacidad actual y capacidad requerida hace visible la distancia que importa.','Distancia concreta entre situación actual y requerida','¿Qué capacidad falta para responder a la prioridad del negocio?'],
+        ['Causa','El análisis busca el origen de la brecha antes de proponer acciones.','Explicación del problema que debe resolverse','¿La brecha nace del proceso, la información, el sistema, la responsabilidad o la gestión?'],
+        ['Oportunidad','Cada causa relevante se traduce en una posibilidad concreta de generar valor o reducir riesgo.','Espacio de mejora vinculado al negocio','¿Qué valor podría capturarse si la causa se resuelve?'],
+        ['Recomendación','La recomendación define qué cambio conviene evaluar y por qué.','Dirección de acción sustentada','¿Qué cambio responde mejor a la oportunidad identificada?'],
+        ['Iniciativa','La recomendación se convierte en una acción con alcance, dependencias y resultado esperado.','Acción definida y evaluable','¿Qué debe hacerse, de qué depende y qué resultado debe producir?'],
+        ['Priorización','Impacto, esfuerzo y dependencias determinan qué conviene hacer primero.','Secuencia de inversión y ejecución','¿Qué iniciativa aporta más valor y qué condiciones requiere para comenzar?']
+      ];
+      document.querySelectorAll('.sequence button').forEach(btn => btn.addEventListener('click', () => {
+        const i = Number(btn.dataset.step); const detail = document.querySelector('.sequence-detail');
+        document.querySelectorAll('.sequence button').forEach(b => b.classList.toggle('active', b === btn));
+        detail.querySelector('.sequence-index').textContent = String(i + 1).padStart(2, '0');
+        detail.querySelector('h3').textContent = sequenceData[i][0]; detail.querySelector('p').textContent = sequenceData[i][1];
+        document.querySelector('.sequence-output').textContent = sequenceData[i][2];
+        document.querySelector('.sequence-question').textContent = sequenceData[i][3];
+      }));
+
+      const unitData = [
+        ['Dirección / Gerencia','Revisaremos cómo se definen prioridades, cómo se patrocinan los cambios y qué información utiliza la gerencia para decidir.','Criterios claros de gobierno, decisión y seguimiento.'],
+        ['Operaciones y planificación','Revisaremos la planificación de viajes, la asignación de recursos, las excepciones y la coordinación diaria.','Flujo operativo visible con decisiones, tiempos y puntos de control.'],
+        ['Flota y telemetría','Revisaremos qué datos producen los vehículos, cómo se usan y qué preguntas operativas todavía no pueden responderse.','Mapa de datos de flota y oportunidades de análisis integrado.'],
+        ['Mantenimiento','Revisaremos planificación, ejecución, disponibilidad, fallas y relación con la información operacional.','Brechas entre mantenimiento planificado, condición del activo y disponibilidad.'],
+        ['Neumáticos','Revisaremos consumo, inspecciones, rotación, trazabilidad y relación con ruta, carga y conducción.','Variables críticas para controlar costo, vida útil y riesgo.'],
+        ['Seguridad y conductores','Revisaremos formación, descanso, comportamiento, alertas y respuesta ante desviaciones.','Relación trazable entre exposición, conducta y acciones preventivas.'],
+        ['Administración / Facturación / Finanzas','Revisaremos el flujo desde el servicio realizado hasta la cobranza, incluyendo esperas y transferencias manuales.','Oportunidades para reducir tiempo de ciclo y capital de trabajo.'],
+        ['Tecnología / Sistemas / Datos','Revisaremos sistemas, integraciones, propietarios de datos, reportes y dependencias técnicas.','Mapa de arquitectura actual y condiciones para integrar información.']
+      ];
+      document.querySelectorAll('[data-unit]').forEach(btn => btn.addEventListener('click', () => {
+        const i = Number(btn.dataset.unit); const box = document.querySelector('.unit-reading');
+        document.querySelectorAll('[data-unit]').forEach(b => b.classList.toggle('active', b === btn));
+        box.querySelector('.unit-code').textContent = `LECTURA ${String(i + 1).padStart(2, '0')}`;
+        box.querySelector('h3').textContent = unitData[i][0]; box.querySelector('p').textContent = unitData[i][1];
+        box.querySelector('.reading-output').textContent = `Resultado esperado: ${unitData[i][2]}`;
+      }));
+
+      const needData = [
+        ['Personas clave','Entrevistas de 45–75 minutos con responsables que conocen la operación, las decisiones y las excepciones del proceso.'],
+        ['Evidencia representativa','Reportes, indicadores, procedimientos, dashboards y formatos que permitan comprobar cómo funciona el proceso.'],
+        ['Sistemas y datos','Fuentes, información generada, conexiones actuales, responsables y usos reales de cada dato relevante.'],
+        ['Validación ejecutiva','Sesiones puntuales para contrastar hallazgos, confirmar brechas y acordar prioridades e iniciativas.']
+      ];
+      const needTruck = ['7%','29%','52%','74%'];
+      document.querySelectorAll('[data-need]').forEach(btn => btn.addEventListener('click', () => {
+        const i = Number(btn.dataset.need); const box = document.querySelector('.journey-detail');
+        document.querySelectorAll('[data-need]').forEach(b => b.classList.toggle('active', b === btn));
+        document.querySelector('.journey-truck').style.left = needTruck[i];
+        box.querySelector('.label').textContent = `Punto ${String(i + 1).padStart(2, '0')}`;
+        box.querySelector('h3').textContent = needData[i][0]; box.querySelector('p').textContent = needData[i][1];
+      }));
+
+      const deliverableData = [
+        ['AATMI','Índice ejecutivo que sintetiza la madurez de transformación y permite comparar dimensiones bajo una misma escala.','Permite reconocer dónde existe capacidad instalada y dónde una brecha limita la transformación.'],
+        ['Mapa de madurez','Vista por dimensión y unidad que muestra el nivel actual, la evidencia disponible y la consistencia de las prácticas.','Permite enfocar la conversación ejecutiva en capacidades concretas, no en percepciones generales.'],
+        ['Mapa procesos–sistemas–datos','Representación de los flujos críticos, los sistemas que los soportan y la información que atraviesa cada decisión.','Hace visibles transferencias, duplicidades, vacíos y dependencias de integración.'],
+        ['Hallazgos y brechas','Conclusiones sustentadas que explican qué ocurre, qué capacidad falta y por qué importa para el negocio.','Separa síntomas de causas y evita proponer soluciones prematuras.'],
+        ['Mapa de oportunidades','Conjunto organizado de oportunidades en procesos, digitalización, integración, automatización, analítica e IA.','Relaciona cada oportunidad con una brecha y con el valor que podría generar.'],
+        ['Portafolio de iniciativas','Acciones posibles con propósito, alcance inicial, dependencias y resultado esperado.','Convierte oportunidades en opciones concretas que TRANSPESA puede evaluar.'],
+        ['Priorización','Comparación de iniciativas por impacto, esfuerzo, urgencia, riesgo y dependencia.','Define qué conviene iniciar, preparar, postergar o descartar.'],
+        ['Roadmap','Secuencia por horizontes que conecta quick wins, fundamentos, integración, inteligencia y evolución.','Entrega una ruta de transformación que puede ejecutarse por etapas.']
+      ];
+      document.querySelectorAll('[data-deliverable]').forEach(btn => btn.addEventListener('click', () => {
+        const i = Number(btn.dataset.deliverable); const box = document.querySelector('.deliverable-detail');
+        document.querySelectorAll('[data-deliverable]').forEach(b => b.classList.toggle('active', b === btn));
+        box.querySelector('.detail-no').textContent = String(i + 1).padStart(2, '0');
+        box.querySelector('h3').textContent = deliverableData[i][0]; box.querySelector('p').textContent = deliverableData[i][1];
+        box.querySelector('.decision-use').textContent = deliverableData[i][2];
+      }));
+
+      const roadmapData = [
+        ['0–90<br>días','Quick wins y fundamentos','Estabilizar datos críticos, resolver fricciones evidentes y preparar las dependencias que habilitan los siguientes horizontes.',['Datos críticos','Responsables','Reglas mínimas','Victorias tempranas']],
+        ['3–6<br>meses','Integración y automatización','Conectar flujos prioritarios, reducir transferencias manuales y construir una base analítica útil.',['Integraciones prioritarias','Flujos digitales','Automatización','Indicadores compartidos']],
+        ['6–12<br>meses','Inteligencia y optimización','Aplicar analítica e inteligencia donde la evidencia demuestre valor y exista capacidad para sostenerla.',['Modelos analíticos','Alertas','Optimización','Escalamiento controlado']],
+        ['+12<br>meses','Evolución continua','Escalar lo que funciona, ajustar la arquitectura y revisar prioridades con evidencia actualizada.',['Gobierno continuo','Nuevos casos','Aprendizaje','Repriorización']]
+      ];
+      document.querySelectorAll('[data-roadmap]').forEach(btn => btn.addEventListener('click', () => {
+        const i = Number(btn.dataset.roadmap); const stage = document.querySelector('.roadmap-stage');
+        document.querySelectorAll('[data-roadmap]').forEach(b => b.classList.toggle('active', b === btn));
+        stage.querySelector('.roadmap-window').innerHTML = roadmapData[i][0]; stage.querySelector('h3').textContent = roadmapData[i][1]; stage.querySelector('p').textContent = roadmapData[i][2];
+        stage.querySelector('.roadmap-outcomes').innerHTML = roadmapData[i][3].map(x => `<span>${x}</span>`).join('');
+        document.querySelector('.roadmap-truck').style.left = ['3%','28%','52%','74%'][i];
+      }));
+
+      const layerData = {
+        fleet:'Integra vehículo, conductor, ruta, carga y contexto operacional para evaluar disponibilidad, eficiencia y anticipación.',
+        energy:'Relaciona consumo energético, ruta, carga, conducción y desempeño para identificar patrones que convenga validar.',
+        maintenance:'Conecta condición, historial, fallas, disponibilidad y planificación para evaluar decisiones preventivas.',
+        safety:'Relaciona exposición, comportamiento, descanso, alertas y acciones para fortalecer la prevención.',
+        operations:'Integra planificación, ejecución, excepciones y tiempos de viaje para mejorar visibilidad y coordinación.',
+        commercial:'Relaciona servicio, compromisos, demanda y rentabilidad para apoyar decisiones comerciales con evidencia.',
+        financial:'Conecta operación, orden de compra, facturación, cobranza y capital de trabajo para evaluar el ciclo completo.'
+      };
+      document.querySelectorAll('[data-layer]').forEach(btn => btn.addEventListener('click', () => {
+        if (!btn.closest('.layer-menu')) return;
+        document.querySelectorAll('.layer-menu button').forEach(b => b.classList.toggle('active', b === btn));
+        const rings = document.querySelector('.rings'); rings.dataset.layer = btn.dataset.layer; rings.querySelector('.layer-label').textContent = btn.textContent;
+        document.querySelector('.layer-insight').textContent = layerData[btn.dataset.layer];
+      }));
+
+      const weekData = [
+        ['SEMANA 1','Descubrimiento','Entrevistas, evidencia inicial, sistemas relevantes y confirmación del alcance.','Base de evidencia y agenda de análisis confirmadas.'],
+        ['SEMANA 2','Análisis','Evaluación de madurez, trazabilidad de evidencia y formulación de brechas y causas.','Mapa de madurez y brechas con sustento verificable.'],
+        ['SEMANA 3','Decisiones','Conversión de brechas en oportunidades, iniciativas y una primera priorización.','Portafolio preliminar contrastado con TRANSPESA.'],
+        ['SEMANA 4','Ruta ejecutiva','Roadmap, Informe Ejecutivo y preparación de la presentación final.','Ruta priorizada y decisiones siguientes claramente documentadas.']
+      ];
+      document.querySelectorAll('[data-week]').forEach(btn => btn.addEventListener('click', () => {
+        const i = Number(btn.dataset.week); const box = document.querySelector('.week-detail');
+        document.querySelectorAll('[data-week]').forEach(b => b.classList.toggle('active', b === btn));
+        document.querySelector('.week-truck').style.left = ['4%','27%','50%','72%'][i];
+        box.querySelector('.week-no').textContent = weekData[i][0]; box.querySelector('h3').textContent = weekData[i][1]; box.querySelector('p').textContent = weekData[i][2];
+        box.querySelector('.week-result').textContent = `Resultado: ${weekData[i][3]}`;
+      }));
+      show(current, false);
+    })();
+  </script>
+</body>
+</html>
