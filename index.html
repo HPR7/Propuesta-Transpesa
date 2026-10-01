@@ -141,10 +141,27 @@
     .hypothesis-note::before { content:"HIPÓTESIS A VALIDAR"; font-size:11px; letter-spacing:.14em; color:white; background:var(--red); padding:7px 9px; }
 
     .aatmf-core { display:grid; grid-template-columns: .9fr 1.1fr; gap: clamp(40px, 7vw, 100px); align-items:center; flex:1; }
-    .aatmf-mark { width:min(320px, 100%); aspect-ratio:1; border:1px solid var(--line); border-radius:50%; display:grid; place-items:center; position:relative; }
-    .aatmf-mark::before, .aatmf-mark::after { content:""; position:absolute; inset:11%; border:1px solid rgba(34,184,189,.35); border-radius:50%; }
-    .aatmf-mark::after { inset:27%; background:var(--navy); }
-    .aatmf-mark strong { position:relative; z-index:1; color:white; font-size:clamp(30px,4vw,58px); letter-spacing:-.04em; }
+    .aatmf-mark {
+      width:min(340px, 100%);
+      aspect-ratio:1;
+      border:2px solid rgba(34,184,189,.72);
+      border-radius:50%;
+      display:grid;
+      place-items:center;
+      position:relative;
+      overflow:hidden;
+      background:
+        radial-gradient(circle at 38% 30%, rgba(34,184,189,.26), transparent 34%),
+        linear-gradient(145deg,#203d59 0%,#111b2a 62%,#090f19 100%);
+      box-shadow:0 26px 65px rgba(17,27,42,.28), inset 0 0 55px rgba(34,184,189,.12);
+    }
+    .aatmf-mark::before, .aatmf-mark::after { content:""; position:absolute; border-radius:50%; pointer-events:none; }
+    .aatmf-mark::before { inset:8%; border:1px solid rgba(255,255,255,.24); }
+    .aatmf-mark::after { inset:20%; border:1px solid rgba(34,184,189,.52); box-shadow:0 0 34px rgba(34,184,189,.18); }
+    .aatmf-lockup { position:relative; z-index:2; text-align:center; display:grid; justify-items:center; gap:8px; }
+    .aatmf-lockup strong { color:white; font-size:clamp(44px,5.3vw,72px); line-height:.88; letter-spacing:-.055em; text-shadow:0 4px 20px rgba(0,0,0,.45); }
+    .aatmf-kicker { color:#72e1e1; font-size:clamp(9px,.8vw,12px); font-weight:850; letter-spacing:.19em; text-transform:uppercase; }
+    .aatmf-version { color:white; background:var(--red); border-radius:999px; padding:7px 13px; font-size:clamp(11px,1vw,14px); font-weight:850; letter-spacing:.12em; text-transform:uppercase; box-shadow:0 7px 18px rgba(202,38,52,.32); }
     .dimensions { display:grid; grid-template-columns:repeat(2,1fr); gap:14px 28px; }
     .dimension { border-bottom:1px solid var(--line); padding: 9px 0 12px; font-size:clamp(16px,1.35vw,20px); font-weight:760; }
     .dimension span { color:var(--red); margin-right:10px; }
@@ -742,7 +759,7 @@
       <p class="eyebrow">Lo que proponemos</p>
       <h2>Diagnóstico Empresarial de Transformación</h2>
       <div class="aatmf-core">
-        <div class="aatmf-mark"><strong>AATMF<br>v1.0</strong></div>
+        <div class="aatmf-mark"><div class="aatmf-lockup"><span class="aatmf-kicker">Marco de madurez</span><strong>AATMF</strong><span class="aatmf-version">Versión 1.0</span></div></div>
         <div>
           <p class="lead">ASSEGURA AI Transformation Maturity Framework evalúa cómo se relacionan las capacidades que permiten transformar el negocio.</p>
           <div class="dimensions">
